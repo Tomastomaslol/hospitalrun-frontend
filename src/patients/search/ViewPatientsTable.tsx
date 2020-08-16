@@ -17,6 +17,7 @@ const ViewPatientsTable = (props: Props) => {
   const { searchRequest } = props
   const { t } = useTranslator()
   const history = useHistory()
+
   const { data, status } = usePatients(searchRequest)
 
   if (data === undefined || status === 'loading') {

@@ -8,37 +8,45 @@ import ViewPatientsTable from '../../../patients/search/ViewPatientsTable'
 import PatientRepository from '../../../shared/db/PatientRepository'
 
 describe('Search Patients', () => {
-  const setup = () => {
-    const wrapper = mount(<SearchPatients />)
+  const setup = async () => {
+    let wrapper: any
 
+    await act(async () => {
+      wrapper = await mount(<SearchPatients />)
+    })
     return { wrapper }
   }
 
   beforeEach(() => {
+    jest.resetAllMocks()
     jest.spyOn(PatientRepository, 'search').mockResolvedValueOnce([])
+    jest.spyOn(PatientRepository, 'count').mockResolvedValueOnce(0)
   })
 
-  it('should render a patient search input', () => {
-    const { wrapper } = setup()
+  it('should render a patient search input', async () => {
+    const { wrapper } = await setup()
 
     expect(wrapper.exists(PatientSearchInput)).toBeTruthy()
   })
 
-  it('should render a view patients table', () => {
-    const { wrapper } = setup()
+  it('should render a view patients table', async () => {
+    const { wrapper } = await setup()
 
     expect(wrapper.exists(ViewPatientsTable)).toBeTruthy()
   })
 
-  it('should update view patients table search request when patient search input changes', () => {
+  it('should update view patients table search request when patient search input changes', async () => {
     const expectedSearch = { queryString: 'someQueryString' }
-    const { wrapper } = setup()
+    let wrapper: any
 
-    act(() => {
+    await act(async () => {
+      wrapper = await mount(<SearchPatients />)
+      wrapper.update()
       const patientSearch = wrapper.find(PatientSearchInput)
       const onChange = patientSearch.prop('onChange')
       onChange(expectedSearch)
     })
+
     wrapper.update()
 
     const patientsTable = wrapper.find(ViewPatientsTable)
